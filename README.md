@@ -56,6 +56,17 @@
 - Nhằm xác định được consumer đã đọc msg tới đâu tại hiện thời, consumer thường commit offset đã đọc được.
 - Nếu có lỗi xảy ra, consumer sẽ biết bắt đầu từ đâu.
 - Nếu có một consumer mới được thêm, thông tin offset cũng được sử dụng để bắt đầu đọc.
+### Kafka brokers
+- Mỗi phân vùng lại nằm trên các server khác nhau, cũng được biết đến với tên khác là broker.
+- Một kafka server thì được gọi là kafka broker
+### Kafka cluster
+- Một tập hợp các brokers thì được gọi là một kafka cluster.
+- Các client muốn nhận hay gửi msg thì có thể kết nối đến bất kì broker nào. Các broker đều có metadata của các broker khác .
+### Kafka brokers và Topics
+- Để đạt được thông lượng và mức độ mở rộng thì các phân vùng được phân bố đều trên các brokers.
+### Cách client kết nối tới Kafka Cluster
+- Broker trong cluster có tên gọi khác là bootstrap server.
+- Khi client kết nối đến 1 bootstrap server, nó sẽ trả về list các broker có trong cluter.
 
 ## Kafka CLI
 ### Kafka Topics:
