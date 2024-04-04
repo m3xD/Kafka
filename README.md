@@ -22,6 +22,10 @@
 - Các ứng dụng mà gửi data đến cho topic thì được gọi là Producer.
 - Được viết trên nhiều ngôn ngữ: Go, Java, Python,...
 - Khi data được gửi đến topic, message được phân phối cho các phân vùng dựa trên một thuật toán nào đó.
+- Thuật toán murmur2 là một cách để phân phối msg trên các phân vùng:
+ ```
+ targetPartition = Math.abs(Utils.murmur2(keyBytes)) % (numPartitions - 1)
+ ```
 - Message Keys:
   * Key = null: Các message được phân bổ đồng đều trên các phân vùng trong topic theo thuật toán round-robin.
   * Key != null: Các message có cùng key xếp chung một phân vùng
@@ -34,6 +38,24 @@
 - Partition + offset: một msg được định danh bởi số thứ tự phân vùng và offset id.
 - Timestamp: có thể thêm bởi người dùng hoặc system.
 ### Kafka Message Serializers
+- Vì broker chỉ nhận dữ liệu byte nên cần có quá trình serialize
+- Consumer lấy data sẽ một lần nữa deserialize
+- Trong quá trình serialize và deserialize thì kiểu dữ liệu không nên thay đổi, nếu có thì cách tốt nhất là tạo một topic mới.
+### Kafka Consumers:
+- Các ứng dụng lấy dữ liệu từ topic thì được gọi là Consumer.
+- Các consumer đọc từ offset thấp đến cao, và không để đọc ngược lại.
+### Kafka Consumer Group
+- Group_id giúp định dạnh consumer group
+- Consumer là một phần của ứng dụng và thực hiện cùng một logic thì có thể xếp thành một nhóm Consumers.
+- Các consumers có trong group có thể phân chia công việc đọc các phân vùng.
+- Sử dụng **GroupCoordinator** và **ConsumerCoordinator** để gán consumer với partition và đảm bảo load balacing với tất cả consumer.
+- Với mỗi phân vùng thì chỉ được gán với 1 consumer, nhưng 1 consumer có thể gán với nhiều phân vùng.
+- Có thể có nhiều consumer group cùng truy cập vào 1 topic tại cùng 1 thời điểm.
+- Nếu có nhiều consumer hơn phân vùng thì các consumer bị dư sẽ ở trạng thái inactive.
+### Kafka Consumer Offsets
+- Nhằm xác định được consumer đã đọc msg tới đâu tại hiện thời, consumer thường commit offset đã đọc được.
+- Nếu có lỗi xảy ra, consumer sẽ biết bắt đầu từ đâu.
+- Nếu có một consumer mới được thêm, thông tin offset cũng được sử dụng để bắt đầu đọc.
 
 ## Kafka CLI
 ### Kafka Topics:
