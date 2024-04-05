@@ -29,7 +29,7 @@
 - Message Keys:
   * Key = null: Các message được phân bổ đồng đều trên các phân vùng trong topic theo thuật toán round-robin.
   * Key != null: Các message có cùng key xếp chung một phân vùng
-### Kafka Message:
+#### Kafka Message:
 ![Elements of Kafka Message](https://www.conduktor.io/kafka/_next/image/?url=https%3A%2F%2Fimages.ctfassets.net%2Fo12xgu4mepom%2F2TuJ55uK20OUVLQgZ17yUU%2F9bb611597f4914e971d85e3938856968%2FKafka_Producers_3.png&w=1920&q=75)
 - Key: optional, key sẽ được serialize thành binary format.
 - Value: có thể null, là nội dụng của msg, value sẽ được serialize thành binary format.
@@ -37,7 +37,7 @@
 - Headers: là các cặp key:value, thường được sử dụng để mô tả metadata về msg.
 - Partition + offset: một msg được định danh bởi số thứ tự phân vùng và offset id.
 - Timestamp: có thể thêm bởi người dùng hoặc system.
-### Kafka Message Serializers
+#### Kafka Message Serializers
 - Vì broker chỉ nhận dữ liệu byte nên cần có quá trình serialize
 - Consumer lấy data sẽ một lần nữa deserialize
 - Trong quá trình serialize và deserialize thì kiểu dữ liệu không nên thay đổi, nếu có thì cách tốt nhất là tạo một topic mới.
@@ -52,21 +52,39 @@
 - Với mỗi phân vùng thì chỉ được gán với 1 consumer, nhưng 1 consumer có thể gán với nhiều phân vùng.
 - Có thể có nhiều consumer group cùng truy cập vào 1 topic tại cùng 1 thời điểm.
 - Nếu có nhiều consumer hơn phân vùng thì các consumer bị dư sẽ ở trạng thái inactive.
-### Kafka Consumer Offsets
+#### Kafka Consumer Offsets
 - Nhằm xác định được consumer đã đọc msg tới đâu tại hiện thời, consumer thường commit offset đã đọc được.
 - Nếu có lỗi xảy ra, consumer sẽ biết bắt đầu từ đâu.
 - Nếu có một consumer mới được thêm, thông tin offset cũng được sử dụng để bắt đầu đọc.
 ### Kafka brokers
 - Mỗi phân vùng lại nằm trên các server khác nhau, cũng được biết đến với tên khác là broker.
 - Một kafka server thì được gọi là kafka broker
-### Kafka cluster
+#### Kafka cluster
 - Một tập hợp các brokers thì được gọi là một kafka cluster.
 - Các client muốn nhận hay gửi msg thì có thể kết nối đến bất kì broker nào. Các broker đều có metadata của các broker khác .
-### Kafka brokers và Topics
+#### Kafka brokers và Topics
 - Để đạt được thông lượng và mức độ mở rộng thì các phân vùng được phân bố đều trên các brokers.
-### Cách client kết nối tới Kafka Cluster
+#### Cách client kết nối tới Kafka Cluster
 - Broker trong cluster có tên gọi khác là bootstrap server.
 - Khi client kết nối đến 1 bootstrap server, nó sẽ trả về list các broker có trong cluter.
+### Kafka Topic Replication:
+- Phòng tránh thất lạc dữ liệu khi broker bị hỏng bằng cách replica các phân vùng.
+- Mỗi phân vùng thì có một phân vùng là leaader và các phân vùng còn lại là replica
+####  In-Sync Replicas:
+- Các replica được cập nhật liên tục cùng với phân vùng leader thì được gọi là ISR.
+#### ACK:
+- Cung cấp giải pháp ghi tối thiểu vào replica để được coi là ghi thành công từ producer.
+- ACK config:
+  * ack = 0: msg được gửi đi mà không cần phản hồi lại.
+  * ack = 1: msg được gửi đi nhưng cần leader partition phản hồi là ghi thành công mới tính là thành công.
+  * ack = all: msg được gửi leader và ISR ghi thành công và phản hồi lại, số ISR tối thiểu cần đáp ứng được config qua **min.insync.replicas**.
+#### Kafka Topic Durability & Availability: 
+```
+Nếu có N replica, thì ta có thể mất N-1 brokers mà vẫn có thể khôi phục dữ liệu.
+```
+#### Kafka Consumers Replicas Fetching
+- Consumer có thể đọc trực tiếp từ ISR mà không cần qua leader partition để tăng hiệu năng và giảm chi phí.
+
 
 ## Kafka CLI
 ### Kafka Topics:
