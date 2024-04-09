@@ -105,6 +105,20 @@ Nếu có N replica, thì ta có thể mất N-1 brokers mà vẫn có thể kh�
    * Nếu ack = all, replication factor = N, min.insync.replicas = M, broker có thể offline tới N - M mà vẫn có thể đảm bảo tính sẵn sàng.
  - Safety settings (default in kafka ver >= 3.0): acks = all và min.insync.replicas = 2 là cài đặt thông dụng nhất, broker có thể unavailable nhiều nhất một để đảm bảo tính sẵn sàng và bền vững.
 
+#### Retries:
+- Gửi lại request khi broker gửi error code, và các trường hợp thử lại là các "Retriable error", có thể khắc phục khi thử lại.
+- Retries: số lần attempt khi broker gửi error code trước khi được mark là fail.
+- Delivery.timeout.ms:
+  * Record được mark là fail nếu không thể gửi tin trong thời gian **Delivery.timeout.ms** được config
+  * `delivery.timeout.ms >= (linger.ms + retry.backoffms + request.timeout.ms)`
+ - retry.backoff.ms: producer sẽ đợi trước khi thử lại sau thời gian này.
+ - max.in.flight.request.per.connection:
+   * số lượng record gửi đi trong 1 connection
+   * nếu config > 1, order của record có thể không được đảm bảo.
+   * nếu config = 1, throughput có thể suy giảm nhiều.
+> [!NOTE]
+> nếu **enable=idempotence=true**, thì **max.in.flight.requests.per.connection** <= 5 để đảm bảo order của record
+
 ## Kafka CLI
 ### Kafka Topics:
 - Để thiết lập kafka qua command line:
