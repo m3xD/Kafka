@@ -85,6 +85,25 @@ Nếu có N replica, thì ta có thể mất N-1 brokers mà vẫn có thể kh�
 #### Kafka Consumers Replicas Fetching
 - Consumer có thể đọc trực tiếp từ ISR mà không cần qua leader partition để tăng hiệu năng và giảm chi phí.
 
+## Advanced Kafka
+### Producers:
+#### Acks:
+- Số brokers phải respone lại thì được coi là ghi thành công.
+- Ack = 0:
+  * Chỉ request lên broker mà không cần chờ ack.
+  * Có thể xảy ra mất mát dữ liệu.
+  * Không thể biết được request đã tới nơi chưa.
+- Ack = 1:
+  * Producer gửi request lên leader broker và chờ ack chỉ từ leader broker.
+  * Nếu không nhận được ack, producer sẽ thử gửi lại request.
+  * Có thể xảy ra mất mát dữ liệu nếu leader broker offline và replica chưa kịp được backup.
+- Ack = all:
+  * Producer gửi request lên, bao gồm cả leader broker và các ISR phải phản hồi lại ack để được tính là ghi thành công.
+  * Leader broker sẽ kiểm tra số lượng ISR cần thiết để ghi data, chờ đợi ack từ các ISR, nếu các ISR tối thiểu đã phản hồi thì sucessful ack sẽ được gửi lại producer.
+ - Tính bền vững và sẵn sàng:
+   * Nếu có N replication factor, broker có thể sập đến N - 1 mà vẫn có thể khôi phục dữ liệu.
+   * Nếu ack = all, replication factor = N, min.insync.replicas = M, broker có thể offline tới N - M mà vẫn có thể đảm bảo tính sẵn sàng.
+ - Safety settings (default in kafka ver >= 3.0): acks = all và min.insync.replicas = 2 là cài đặt thông dụng nhất, broker có thể unavailable nhiều nhất một để đảm bảo tính sẵn sàng và bền vững.
 
 ## Kafka CLI
 ### Kafka Topics:
