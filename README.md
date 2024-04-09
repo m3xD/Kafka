@@ -117,7 +117,17 @@ Nếu có N replica, thì ta có thể mất N-1 brokers mà vẫn có thể kh�
    * nếu config > 1, order của record có thể không được đảm bảo.
    * nếu config = 1, throughput có thể suy giảm nhiều.
 > [!NOTE]
-> nếu **enable=idempotence=true**, thì **max.in.flight.requests.per.connection** <= 5 để đảm bảo order của record
+> nếu **enable=idempotence=true**, thì **max.in.flight.requests.per.connection** <= 5 để đảm bảo order của record.
+
+#### Idempotent:
+- Có một khả năng nhỏ khi cả 2 record đều được ghi thành công broker, dẫn tới duplicate.
+![Duplicate msg](https://www.conduktor.io/kafka/_next/image/?url=https%3A%2F%2Fimages.ctfassets.net%2Fo12xgu4mepom%2F1oXO3anfY5Bm3Uvz5xZRRZ%2F379b11bbbba199b3b001bba6f3e96493%2FAdv_Idempotent_Producer_1.png&w=1920&q=75)
+- Producer idempotence đảm bảo các record trùng nhau sẽ không được commit vào broker.
+![Non-dup mgs](https://www.conduktor.io/kafka/_next/image/?url=https%3A%2F%2Fimages.ctfassets.net%2Fo12xgu4mepom%2F4XZYhrPGmkGENxjfWfDbrW%2F8157319ea1dbc0c1952d51f591e30b0a%2FAdv_Idempotent_Producer_2.png&w=1920&q=75)
+- Cách hoạt động:
+  * Mỗi producer được gán **Producer ID (PID)** mỗi lần producer gửi tin đến broker.
+  * Mỗi msg được gán thêm một **sequences number**, mỗi lần tin được gửi đi, broker sẽ kiểm tra PID-Seq_No xem có lớn hơn PID-Seq_No hiện tại không, nếu không thì discard msg, nếu có thì commit và ghi nhận PID-Seq_No
+  * Beside, này nghe giống mmt thế nhể =)) cur_sequences_num += size(msg)
 
 ## Kafka CLI
 ### Kafka Topics:
