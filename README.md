@@ -127,7 +127,21 @@ Nếu có N replica, thì ta có thể mất N-1 brokers mà vẫn có thể kh�
 - Cách hoạt động:
   * Mỗi producer được gán **Producer ID (PID)** mỗi lần producer gửi tin đến broker.
   * Mỗi msg được gán thêm một **sequences number**, mỗi lần tin được gửi đi, broker sẽ kiểm tra PID-Seq_No xem có lớn hơn PID-Seq_No hiện tại không, nếu không thì discard msg, nếu có thì commit và ghi nhận PID-Seq_No
-  * Beside, này nghe giống mmt thế nhể =)) cur_sequences_num += size(msg)
+  * Beside, này nghe giống mmt thế nhể =)) cur_sequences_num += size(msg).
+  
+ #### Message Compression:
+ - Kafka hỗ trợ 2 kiểu nén dữ liệu ở: producer và broker.
+ - Producer-side:
+   * Có thể config thông qua tham số **compression.type**
+   * Có các lựa chọn nén là: none, gzip, lz4, snappy, zstd.
+ - Broker-side:
+   * Nếu **compression.type=producer** được thiết lập, broker sẽ trực tiếp ghi lên topic mà không nén thêm.
+   * Nếu topic có config khác trên, data sẽ được giải nén và nén theo thiết lập hiện tại.
+ - Producer-level msg compression:
+   * Producer sẽ group các msg thành các batch, các batch này có thể nén lại nếu được thiết lập và gửi tới kafka.
+   * Batch có kích thước bé, batch cũng được transfer nhanh hơn.
+>[!NOTE]
+>snappy hay lz4 có sự cân bằng giữa speed và compression ratio.
 
 ## Kafka CLI
 ### Kafka Topics:
