@@ -161,6 +161,20 @@ Nếu có N replica, thì ta có thể mất N-1 brokers mà vẫn có thể kh�
 - Sticky:
   * Các data được lấp đầy 1 batch hoặc linger.ms timeout thì mới tới batch kế tiếp.
   * Có độ trễ thấp hơn
+ 
+### Consumer:
+#### Delivery Semantics:
+- At most once:
+  * Offset được commit ngay khi poll được gọi, nếu có xảy ra lỗi, offset không thể đọc lại do đã commit.
+  * Phù hợp với các hệ thống có thể chấp nhận mất mát dữ liệu.
+ ![at_most_once](https://www.conduktor.io/kafka/_next/image/?url=https%3A%2F%2Fimages.ctfassets.net%2Fo12xgu4mepom%2F3HWZKKcNQLUiVaZBHOQKWt%2F422c797f8ee23205502b6ddc6e321e54%2FAdv_Delivery_Semantics_for_Consumers_1_2x.png&w=3840&q=75)
+- At least once:
+  * Các offset được commit ngay khi được process bởi consumer.
+  * Có thể có các offset được đọc lại nhiều lần nếu có lỗi xảy ra.
+  * Phù hợp với các hệ thống không chấp nhận mất mát dữ liệu.
+ ![at_least_once](https://www.conduktor.io/kafka/_next/image/?url=https%3A%2F%2Fimages.ctfassets.net%2Fo12xgu4mepom%2F3X2ZPpl4wkTmvnly4e60cu%2F6d3b7404b93030bdfff9012f465ac560%2FAdv_Delivery_Semantics_for_Consumers_2_2x.png&w=3840&q=75)
+- Ta có thể tự động commit sau khoảng thời gian nhất định thông qua 2 tham số là **enable.auto.commit** và **auto.commit.interval.ms** sau khi gọi hành động poll.
+
 
 ## Kafka CLI
 ### Kafka Topics:
