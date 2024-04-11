@@ -154,6 +154,14 @@ Nếu có N replica, thì ta có thể mất N-1 brokers mà vẫn có thể kh�
   * Là size tối đa mà batch có thể chứa các msg.
 - Tất cả các tham số trên đều có thể giúp tăng throughput cũng như gửi ít request hơn các msg được đóng thành từng batch.
 
+#### Round robin partitioner and sticky partitioner:
+- Round robin:
+  * Các data lần lượt được sặp xếp vào các partition theo qui tắc lần lượt từng partition nhận một data cho đến partition thì quay vòng về partition đầu tiên.
+  * Có độ trễ cao
+- Sticky:
+  * Các data được lấp đầy 1 batch hoặc linger.ms timeout thì mới tới batch kế tiếp.
+  * Có độ trễ thấp hơn
+
 ## Kafka CLI
 ### Kafka Topics:
 - Để thiết lập kafka qua command line:
