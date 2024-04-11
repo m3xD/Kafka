@@ -143,6 +143,17 @@ Nếu có N replica, thì ta có thể mất N-1 brokers mà vẫn có thể kh�
 >[!NOTE]
 >snappy hay lz4 có sự cân bằng giữa speed và compression ratio.
 
+#### Producer Batching:
+- Kafka sẽ cố gắng để gửi các record một cách liên tục, người dùng có thể config số lượng msg batch thông qua một tham số.
+- Để config batching thường có 2 tham số tham gia là **linger.ms** và **batch.size**
+- Linger.ms:
+  * Là thời gian producer chờ đợi msg trước khi gửi batch đi.
+  * Tăng thời gian chờ đợi để tăng khả năng các msg được gửi đi cùng một batch.
+  * Nếu batch đã đầy trước khi hết thời gian thì batch cũng được gửi đi ngay.
+- Batch.size:
+  * Là size tối đa mà batch có thể chứa các msg.
+- Tất cả các tham số trên đều có thể giúp tăng throughput cũng như gửi ít request hơn các msg được đóng thành từng batch.
+
 ## Kafka CLI
 ### Kafka Topics:
 - Để thiết lập kafka qua command line:
