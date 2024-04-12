@@ -1,5 +1,13 @@
 # Kafka
 
+## So sánh với RabbitMQ và Redis
+| Kafka         | RabbitMQ | Redis | 
+| ------------- | ------------- | --------- |
+| Có thể gửi up to 1 triệu msg/s  | Có thể gửi 50000 msg/s  | Có thể gửi up to 1 triệu msg/s |
+| Có cơ chế khôi phục dữ liệu và tính sẵn dùng  | Tương tự như kafka  | Không có cơ chế bảo vệ dữ liệu |
+| One to many | One to one, One to many | One to one, One to many |
+| High-throughput | Đa dạng về msg pattern | Độ trễ thấp, hiệu năng cao |
+
 ## Khái niệm:
 ### Kafka Topics:
 - Giống với SQL, topic giống với table nhưng không thể query
