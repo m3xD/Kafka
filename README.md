@@ -175,6 +175,28 @@ Nếu có N replica, thì ta có thể mất N-1 brokers mà vẫn có thể kh�
  ![at_least_once](https://www.conduktor.io/kafka/_next/image/?url=https%3A%2F%2Fimages.ctfassets.net%2Fo12xgu4mepom%2F3X2ZPpl4wkTmvnly4e60cu%2F6d3b7404b93030bdfff9012f465ac560%2FAdv_Delivery_Semantics_for_Consumers_2_2x.png&w=3840&q=75)
 - Ta có thể tự động commit sau khoảng thời gian nhất định thông qua 2 tham số là **enable.auto.commit** và **auto.commit.interval.ms** sau khi gọi hành động poll.
 
+#### Auto Offsets Reset:
+- auto.offset.reset:
+  * lastest: đọc dữ liệu từ offset mới nhất phân vùng.
+  * earliest: đọc từ offset cũ nhất trong phân vùng.
+  * none: throw exception nếu không có offset trước đó.
+- offset.retention.minutes: giúp kéo dài thời gian trước khi bị reset offset.
+
+
+#### Consumer Read from Closest Replica
+- Mặc định consumer sẽ lấy dữ liệu từ leader partition.
+- Từ những version mới hơn của kafka (>=2.4), consumer có thể lấy data từ các ISR gần nhất giúp giảm độ trễ, chi phí.
+
+#### Incremental Rebalance & Static Group Membership:
+- Khi consumer vào group, ra khỏi group hay một phân vùng được thêm vào topic thì cần được rebalance group.
+- Eager Rebalancing:
+  * khi xảy ra các hiện tưởng kể trên, các consumers sẽ tạm dừng lấy data từ kafka và tạm thời dừng liên kết với các partition hiện tại.
+  * các consumer khi được rebalance thì có thể không còn kết nối với các partition trước đấy.
+- Cooperative Rebalance:
+  * Chỉ có một tập nhỏ partition sẽ ngưng liên kết và gán cho consumer mới
+- Static Group Membership:
+  * Khi consumer rời group và rejoin lại, nó sẽ được cấp một member_id mới và có thể được gán với phân vùng mới.
+  * Nếu được config thì consumer có thể được liên kết lại đến phân vùng cũ mà không cần hành động rebalance.
 
 ## Kafka CLI
 ### Kafka Topics:
